@@ -1,0 +1,5 @@
+name: BlacksmithSystem
+version: ${project.version}
+main: blacksmithsystem.blacksmithsystem.BlacksmithSystem
+api-version: 1.13
+description: Blacksmith system
