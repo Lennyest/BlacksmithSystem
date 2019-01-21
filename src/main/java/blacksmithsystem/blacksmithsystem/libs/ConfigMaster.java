@@ -30,13 +30,13 @@ public class ConfigMaster {
 
     private void createConfig() {
 
-        if (!BlacksmithSystem.getPlugin().getDataFolder().exists()) {
-            BlacksmithSystem.getPlugin().getDataFolder().mkdir();
+        if (!BlacksmithSystem.INSTANCE.getDataFolder().exists()) {
+            BlacksmithSystem.INSTANCE.getDataFolder().mkdir();
         }
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
-            BlacksmithSystem.getPlugin().saveResource(path, false);
+            BlacksmithSystem.INSTANCE.saveResource(path, false);
         }
 
         try {

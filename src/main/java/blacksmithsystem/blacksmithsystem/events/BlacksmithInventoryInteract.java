@@ -1,53 +1,36 @@
 package blacksmithsystem.blacksmithsystem.events;
 
 import blacksmithsystem.blacksmithsystem.Animation;
-import blacksmithsystem.blacksmithsystem.BlacksmithSystem;
-import blacksmithsystem.blacksmithsystem.Inventory.BlacksmithInventory;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockVector;
 
 public class BlacksmithInventoryInteract implements Listener {
 
-    ItemStack lockpick = BlacksmithInventory.craftLockpickButton;
-    Inventory blacksmithInventory = BlacksmithInventory.inventory;
+    public static final String LOCKPICK_NAME = ChatColor.RED + "Lockpick";
 
     @EventHandler
     public void clickLockpick(InventoryClickEvent event) {
-        if (!event.getInventory().getTitle().equalsIgnoreCase(blacksmithInventory.getTitle())) {
+        if (!event.getInventory().getTitle().equalsIgnoreCase(BlackSmithInteract.RESULT_SETTER_TITLE)) {
             return;
         }
+        if (event.getCurrentItem() != null && event.getCurrentItem().hasItemMeta() && event.getCurrentItem().getItemMeta().hasDisplayName()) {
 
-        if (!event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(lockpick.getItemMeta().getDisplayName())) {
-            return;
-        }
-
-        Player player = (Player) event.getWhoClicked();
-        Block b = BlackSmithInteract.getClicked();
-        ArmorStand s = b.getLocation().getWorld().spawn(b.getLocation().add(1, 1, 0), ArmorStand.class);
-
-        int animate = Bukkit.getScheduler().scheduleAsyncRepeatingTask(BlacksmithSystem.getPlugin(), new Animation(s, player), 0, 5);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.getScheduler().cancelTask(animate);
-                s.remove();
-                player.getInventory().addItem(lockpick);
-                player.sendMessage(ChatColor.GRAY + "Craft successful! added item: " + ChatColor.BLUE + lockpick.getItemMeta().getDisplayName());
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 100F, 100F);
+            if (!event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(LOCKPICK_NAME)) {
+                return;
             }
-        }.runTaskLater(BlacksmithSystem.getPlugin(), 600);
+            Player player = (Player) event.getWhoClicked();
+            BlockVector blockVector = (BlockVector) player.getMetadata("anvil").get(0).value();
 
-        s.setItemInHand(new ItemStack(Material.IRON_AXE));
+            ArmorStand stand = player.getWorld().spawn(blockVector.toLocation(player.getWorld()).add(1, 1, 0), ArmorStand.class);
+            stand.setItemInHand(new ItemStack(Material.IRON_AXE));
+            new Animation(stand).start(600);
+        }
     }
 }

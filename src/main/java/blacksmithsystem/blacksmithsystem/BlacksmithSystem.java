@@ -11,22 +11,16 @@ import static blacksmithsystem.blacksmithsystem.libs.LennyLib.registerCommand;
 
 public final class BlacksmithSystem extends JavaPlugin {
 
-    @Getter
-    private static Plugin plugin;
+    public static Plugin INSTANCE;
+
+    public BlacksmithSystem() {
+        INSTANCE = this;
+    }
 
     @Override
     public void onEnable() {
         registerCommand(new Blacksmith());
         getServer().getPluginManager().registerEvents(new BlackSmithInteract(), this);
         getServer().getPluginManager().registerEvents(new BlacksmithInventoryInteract(), this);
-        plugin = this;
     }
-
-    @Override
-    public void onDisable() {
-        plugin = null;
-    }
-
-
-
 }

@@ -12,17 +12,22 @@ import java.lang.reflect.Field;
 
 public class LennyLib {
 
-    public static void registerCommand(Command command) {
+    private static final CommandMap COMMAND_MAP;
+    static {
+        CommandMap tempCommandMap = null;
         try {
-            final Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
 
-            final CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
-            commandMap.register(command.toString(), command);
-
-        } catch(final Exception e) {
+            tempCommandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        COMMAND_MAP = tempCommandMap;
+    }
+
+    public static void registerCommand(Command command) {
+            COMMAND_MAP.register(command.toString(), command);
     }
 
     public static String colorize(String input) {
